@@ -3,13 +3,18 @@ const { NotImplementedError } = require('../extensions/index.js');
 const MODERN_ACTIVITY = 15;
 const HALF_LIFE_PERIOD = 5730;
 
-module.exports = function dateSample(sampleActivity) {
-  const sampleNum = Number.parseFloat(sampleActivity);
-  if(typeof sampleActivity !== 'string' || isNaN(sampleNum ) || sampleNum <= 0 || sampleNum > MODERN_ACTIVITY) {
+function dateSample(sampleActivity) {
+  if(!sampleActivity || typeof sampleActivity !== "string" || MODERN_ACTIVITY < sampleActivity ||
+    sampleActivity < 0) {
     return false;
   }
-  const half = MODERN_ACTIVITY / sampleNum;
-  const m = Math.log(2) / HALF_LIFE_PERIOD;
-  const age = Math.log(half) / m;
-  return Math.ceil(age);
+  const activity = parseFloat(sampleActivity);
+  if(!activity) {
+    return false;
+  }
+  return Math.ceil(((Math.log(MODERN_ACTIVITY / activity)) / (Math.log(2)) * HALF_LIFE_PERIOD));
+}
+
+module.exports = {
+  dateSample
 };
